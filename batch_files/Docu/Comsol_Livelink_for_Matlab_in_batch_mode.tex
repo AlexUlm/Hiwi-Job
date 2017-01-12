@@ -1,0 +1,164 @@
+\documentclass[12pt]{scrartcl}%{article} % Beginn der LaTeX-Datei
+
+%% twocolumn
+
+\usepackage{amsmath,amssymb}  % erleichtert Mathe 
+\usepackage{enumerate}% schicke Nummerierung
+
+\usepackage{graphicx} % für Grafik-Einbindung
+%\usepackage{hyperref}
+
+\usepackage[ngerman]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+ % Einstellungen, wenn man deutsch schreiben will, z.B. Trennregeln
+\usepackage[utf8]{inputenc}  % für Unix-Systeme
+  % ermöglicht die direkte Eingabe von Umlauten und ß
+  % evt. obige Zeile ersetzen durch
+  % \usepackage[ansinew]{inputenc}  % für Windows
+  % \usepackage[applemac]{inputenc} % für den Mac
+
+\usepackage{booktabs}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  ntheorem
+%
+\usepackage[thmmarks,amsmath,hyperref,noconfig]{ntheorem} 
+  % erlaubt es, Sätze, Definitionen etc. einfach durchzunummerieren.
+\newtheorem{satz}{Satz}[section] % Nummerierung nach Abschnitten
+\newtheorem{hilfssatz}[satz]{Hilfssatz}
+\newtheorem{kor}[satz]{Korollar}
+
+\theorembodyfont{\upshape}
+\newtheorem{beispiel}[satz]{Beispiel}
+\newtheorem{bemerkung}[satz]{Bemerkung}
+\newtheorem{definition}[satz]{Definition} %[section]
+
+\theoremstyle{nonumberplain}
+\theoremheaderfont{\itshape}
+\theorembodyfont{\normalfont}
+\theoremseparator{.}
+\theoremsymbol{\ensuremath{_\blacksquare}}
+\newtheorem{beweis}{Beweis}
+\qedsymbol{\ensuremath{_\blacksquare}}
+%\theoremclass{LaTeX}
+%
+% Ende ntheorem
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%\pagestyle{empty}
+%
+% Ändern der bedruckten Fläche der Seite
+% \addtolength{\textwidth}{3cm}  % Befehl mit zwei Argumenten
+% \addtolength{\textheight}{3cm}
+% \hoffset-2cm % verschiebt das Textfenster nach links
+% \voffset-5mm % verschiebt das Textfenster nach oben
+%
+%\parindent=0pt %% keine Einzug zu Beginn von Abs\"atzen
+%\parskip=2mm   %% erzeugt einen zusätzliche Zeilenabstand zwischen
+                %% Absätzen. Nötig bei \parindent=0pt
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ermöglicht, farbigen Text zu drucken.
+\usepackage{color}
+% Und nun werden die Farben definiert - daran können Sie nach Belieben selber rumspielen.
+\definecolor{white}{rgb}{1,1,1}
+\definecolor{darkred}{rgb}{0.3,0,0}
+\definecolor{darkgreen}{rgb}{0,0.3,0}
+\definecolor{darkblue}{rgb}{0,0,0.3}
+\definecolor{pink}{rgb}{0.78,0.09,0.51}
+\definecolor{purple}{rgb}{0.28,0.24,0.55}
+\definecolor{orange}{rgb}{1,0.6,0.0}
+\definecolor{grey}{rgb}{0.4,0.4,0.4}
+\definecolor{aquamarine}{rgb}{0.4,0.8,0.65}
+
+
+\DeclareMathOperator{\GL}{GL} % einige Macro, siehe am Ende Abschn. 2
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\cP}{{\mathcal P}} 
+
+\begin{document}
+
+\author{}
+\title{COMSOL LiveLink für Matlab auf dem bwUniCluster}
+\date{} %hier können Sie ein Datum eingeben, auch leer, sonst wird es
+         %automatisch erzeugt
+
+\maketitle % erzeugt den Kopf
+
+\section{Allgemeines}
+
+\begin{itemize}
+\item Voraussetzung: Registrieren für den bwUniCluster und bwFileStorage auf der Website des KIT 
+\item Verbindung aufbauen:
+\begin{enumerate}
+\item bwUniCluster  \\ \texttt{ssh -X präfix\_login@bwunicluster.scc.kit.edu}
+\item bwFileStorage \\ \texttt{ssh präfix\_login@bwfilestorage-login.lsdf.kit.edu}
+\end{enumerate}
+\item Dateien vom lokalen PC in das Home-Verzeichnis des bwUniClusters kopieren:
+\begin{enumerate}
+\item Übertragung der lokalen Dateien auf den bwFileStorage Server: \\ \texttt{scp -r <local\_path> präfix\_login@bwfilestorage.lsdf.kit.edu:<remote\_path/>}
+\item Übertragung der Dateien vom bwFileStorage auf den bwUniCluster
+\begin{enumerate}
+\item[I)] Anmeldung auf dem bwUniCluster
+\item[II)] Kopieren der Dateien \\ \texttt{rdata 'cp -r \$BWFILESTORAGE/<path> \$HOME/<path>'}
+\end{enumerate}
+\end{enumerate}
+\item Dateien vom bwUniCluster auf lokalen PC kopieren
+\begin{enumerate}
+\item Übertragung vom bwUniCluster zum bwFileStorage \\ \texttt{rdata 'cp -r \$HOME/<path> \$BWFILESTORAGE/<path>'}
+\item Übertragung vom bwFileStorage Server auf lokalen PC \\ \texttt{scp präfix\_login@bwfilestorage.lsdf.kit.edu:<remote path> /<local path>}
+\end{enumerate}
+\item Batch-System des bwUnicluster
+\begin{itemize}
+\item Job-Submission: \texttt{msub}
+\item Job-Canceling: \texttt{mjobctl -c <Job\_ID>}
+\item Status der Batch-Jobs anzeigen: \texttt{showq}
+\end{itemize}
+\item Dinge die vor dem ersten Batch-Job erledigt werden müssen
+\begin{itemize}
+\item Der COMSOL-Server muss einmal manuell mit dem Befehl \texttt{comsol server matlab} gestartet werden um einen persönlichen Benutzernamen und ein Kennwort festzulegen.
+\item COMSOL muss einmal manuell geöffnet werden und es muss bei \textit{Preferences > Security > Allow external processes and libaries} ein Haken gesetzt werden.
+\end{itemize}
+\end{itemize}
+
+\section{Interactive Batch-Jobs}
+Interaktive Berechnungen auf der Login-Node des bwUniClusters sind nicht erlaubt. Für interaktive Berechnungen muss auf interaktive Batch-Jobs (Option \texttt{-I}) zurückgegriffen werden. Beispiel:\\
+\hspace*{0.5cm} \texttt{musb -I -V -l nodes=1:ppn=4 -l walltime=00:00:20:00} \\
+Die restlichen Optionen können analog zu normalen Batch-Jobs gewählt werden.\\
+Anschließend darf der Terminal nicht geschlossen werden und man muss darauf warten, dass einem die entsprechenden Ressourcen zugewiesen werden.
+
+\section{bwUniCluster unter Windows}
+\begin{itemize}
+\item Zugriff über Putty mit den Einstellungen\\
+\hspace*{0.5cm}\texttt{Host Name : präfix\_login@bwunicluster.scc.kit.edu}\\
+\hspace*{0.5cm}\texttt{Port: 22}\\ 
+\hspace*{0.5cm}\texttt{Connection Type: SSH} \\ 
+Für graphische Anwendungen (z.B. Textdatei anzeigen) muss zusätzlich Xming installiert werden und in den Putty Einstellungen bei \textit{SSH > X11 > Enable X11 forewarding} ein Haken gesetzt werden.\\
+Wenn man sich anschließend mit dem bwUniCluster verbindet so öffnet sich ein Terminal in dem man dann die selben Befehle verwenden kann wie beim arbeiten unter Linux.
+\item Alternativ kann man sich auch über WinSCP auf dem bwUniCluster einloggen (Zur Verwaltung des Home-Verzeichnisses).
+\end{itemize}
+
+\section{Linux Terminal}
+\begin{tabular}{ll} 
+\toprule
+\textbf{Linux Terminalbefehle}\\  
+\midrule 
+Nutzen & Befehl\\ 
+\midrule 
+Dateinmanager öffnen & \texttt{nautilus}\\
+Verzeichnis wechseln & \texttt{cd <Verzeichnisname>}\\
+In nächst höheres Verzeichnis wechseln & \texttt{cd ..}\\
+Dateien Löschen & \texttt{rm -rf <Dateiname>} \\
+\bottomrule
+\end{tabular}
+
+\end{document}
