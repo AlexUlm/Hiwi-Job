@@ -1,0 +1,60 @@
+#!/bin/sh 
+#
+########## Begin MOAB/Slurm header ##########
+#
+# Give job a reasonable name
+#MOAB -N Comsol_with_livelink
+#
+# Request number of nodes and CPU cores per node for job
+#MOAB -l nodes=1:ppn=8
+#
+# Estimated wallclock time for job
+#MOAB -l walltime=00:20:00
+#
+# Total memory required 
+#MOAB -l mem=64000mb
+#
+# Specify a queue class
+#MOAB -q singlenode
+#
+# Write standard output and errors in same file
+#MOAB -j oe 
+#
+# Send mail when job begins, aborts and ends
+#MOAB -m bae
+#
+########### End MOAB header ##########
+
+echo "Submit Directory:                     $MOAB_SUBMITDIR"
+echo "Working Directory:                    $PWD"
+echo "Running on host                       $HOSTNAME"
+echo "Job id:                               $MOAB_JOBID"
+echo "Job name:                             $MOAB_JOBNAME"
+echo "Number of nodes allocated to job:     $MOAB_NODECOUNT"
+echo "Number of cores allocated to job:     $MOAB_PROCCOUNT"
+
+
+# Set the number of computing nodes and the number processor cores per node
+NSLOTS=$MOAB_PROCCOUNT
+NNODES=$MOAB_NODECOUNT
+
+# Load modules 
+module load math/matlab/R2016a
+module load cae/comsol/5.2a
+
+# Create results directorie
+mkdir results
+mkdir results/"$MOAB_JOBNAME"
+
+# Start Live-Link server
+
+# Send comsol server output to /dev/null
+# comsol server -nn $NNODES -np $NSLOTS </dev/null > /dev/null &
+
+# Write comsol server output in .txt file
+comsol server -np $NSLOTS > results/"$MOAB_JOBNAME"/"$MOAB_JOBNAME".comsol_server_output.txt &
+
+# Start a Matlab program (runComsol.m)
+matlab -nodesktop -nosplash -r  "addpath(genpath('/opt/bwhpc/ul/cae/comsol/5.2a/mli')); mphstart; runComsol;exit;"  > results/"$MOAB_JOBNAME"/"$MOAB_JOBNAME".out 2>&1
+
+exit
