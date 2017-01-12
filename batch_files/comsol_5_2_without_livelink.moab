@@ -1,0 +1,59 @@
+#!/bin/bash
+#
+########## Begin SGE header ##########
+#
+# Give job a reasonable name
+#MOAB -N Comsol_batch
+#
+# Request number of nodes and CPU cores per node for job
+#MOAB -l nodes=1:ppn=8
+#
+# Estimated wallclock time for job
+#MOAB -l walltime=04:00:00
+#
+# Total memory required 
+#MOAB -l mem=64000mb
+#
+# Specify a queue class
+#MOAB -q singlenode
+#
+# Write standard output and errors in same file
+#MOAB -j oe 
+#
+# Send mail when job begins, aborts and ends
+#MOAB -m bae
+#
+########### End MOAB header ##########
+
+echo "Submit Directory:                     $MOAB_SUBMITDIR"
+echo "Working Directory:                    $PWD"
+echo "Running on host                       $HOSTNAME"
+echo "Job id:                               $MOAB_JOBID"
+echo "Job name:                             $MOAB_JOBNAME"
+echo "Number of nodes allocated to job:     $MOAB_NODECOUNT"
+echo "Number of cores allocated to job:     $MOAB_PROCCOUNT"
+
+
+# Set the number of computing nodes and the number of processor cores per node 
+NSLOTS=$MOAB_PROCCOUNT
+NNODES=$MOAB_NODECOUNT
+
+# Define COMSOL input/output models and log file 
+COMSOL_IN_FILE="Comsol_model.mph"
+COMSOL_OUT_FILE="Comsol_model_out.mph"
+COMSOL_LOG_FILE="Comsol_logfile.log"
+
+# Create results directory
+RESULTS_DIR="$MOAB_SUBMITDIR"/results/"$MOAB_JOBNAME"."$MOAB_JOBID"
+mkdir -pv "$RESULTS_DIR" 
+
+# Load required modules
+module load cae/comsol
+module load math/matlab
+
+# Run COMSOL job
+comsol batch -nn $NNODES -np $NSLOTS -inputfile "$COMSOL_IN_FILE"   \
+                         > "$RESULTS_DIR"/"$COMSOL_LOG_FILE" 2>&1
+
+
+exit
