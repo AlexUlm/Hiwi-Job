@@ -40,7 +40,7 @@ NNODES=$MOAB_NODECOUNT
 
 # Load modules 
 module load math/matlab/R2016a
-module load cae/comsol/5.2a
+module load cae/comsol/5.2a_fnl
 
 # Create results directorie
 mkdir results
@@ -52,7 +52,7 @@ mkdir results/"$MOAB_JOBNAME"
 # comsol server -nn $NNODES -np $NSLOTS </dev/null > /dev/null &
 
 # Write comsol server output in .txt file
-comsol server -np $NSLOTS > results/"$MOAB_JOBNAME"/"$MOAB_JOBNAME".comsol_server_output.txt &
+comsol server -nn $NNODES -np $NSLOTS > results/"$MOAB_JOBNAME"/"$MOAB_JOBNAME".comsol_server_output.txt &
 
 # Start a Matlab program (runComsol.m)
 matlab -nodesktop -nosplash -r  "addpath(genpath('/opt/bwhpc/ul/cae/comsol/5.2a/mli')); mphstart; runComsol;exit;"  > results/"$MOAB_JOBNAME"/"$MOAB_JOBNAME".out 2>&1
