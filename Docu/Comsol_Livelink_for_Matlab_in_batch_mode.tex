@@ -105,7 +105,8 @@
 \end{enumerate}
 \item Dateien vom lokalen PC in das Home-Verzeichnis des bwUniClusters kopieren:
 \begin{enumerate}
-\item Übertragung der lokalen Dateien auf den bwFileStorage Server: \\ \texttt{scp -r <local\_path> präfix\_login@bwfilestorage.lsdf.kit.edu:<remote\_path/>}
+\item Übertragung der lokalen Dateien auf den bwFileStorage Server: \\ \texttt{scp -r <local\_path> präfix\_login@bwfilestorage.lsdf.kit.edu:<remote\_path/>} \\
+(kein Leerzeichen zwischen : und <remote\_path>!)
 \item Übertragung der Dateien vom bwFileStorage auf den bwUniCluster
 \begin{enumerate}
 \item[I)] Anmeldung auf dem bwUniCluster
@@ -147,6 +148,17 @@ Wenn man sich anschließend mit dem bwUniCluster verbindet so öffnet sich ein T
 \item Alternativ kann man sich auch über WinSCP auf dem bwUniCluster einloggen (Zur Verwaltung des Home-Verzeichnisses).
 \end{itemize}
 
+\section{Mesh refinement}
+Ziel: Simulationsergebnis soll durch eine Verfeinerung des Meshes zur exakten Lösung ("unendlich" feines Mesh) konvergieren. Gleichzeitig soll soll das Netz aber nur so fein wie nötig gemacht werden, um die erforderliche Rechnerkapazität und Rechenzeit bei der Simulation des Modells möglichst gering zu halten. \\
+Vorgehen:
+\begin{enumerate}
+\item Wahl einer aussagekräftigen Zustandsgröße des Modells anhand derer die Güte der Simulation mit der jeweiligen Netzgröße bewertet werden kann.
+\item Größe des Netzes als Parameter definieren
+\item Parametric Sweep über des Parameter durchführen (sehr zeitaufwendig, da das System für alle vorgegebenen Parameterwerte komplett simuliert werden muss.
+\item Vergleich der Güte der Simulationsergebnisse anhand einer aussagekräftigen Zustandsgröße
+des Modells 
+\end{enumerate} 
+
 \section{Linux Terminal}
 \begin{tabular}{ll} 
 \toprule
@@ -162,4 +174,3 @@ Dateien Löschen & \texttt{rm -rf <Dateiname>} \\
 \end{tabular}
 
 \end{document}
-
