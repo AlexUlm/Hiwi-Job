@@ -38,21 +38,31 @@ echo "Number of cores allocated to job:     $MOAB_PROCCOUNT"
 NSLOTS=$MOAB_PROCCOUNT
 NNODES=$MOAB_NODECOUNT
 
-# Load modules 
+
+# Load required modules 
 module load math/matlab/R2016a
-module load cae/comsol/5.2a_fnl
+
+# Comsol Class Kit Licence for only using one computing node
+module load cae/comsol/5.2a
+
+# Comsol floating network licence for multiple computing nodes
+# module load cae/comsol/5.2a_fnl
+
 
 # Create results directorie
 mkdir results
 mkdir results/"$MOAB_JOBNAME"
 
+
 # Start Live-Link server
+# The -nn option can only be used with comsol/5.2a_fnl 
 
 # Send comsol server output to /dev/null
 # comsol server -nn $NNODES -np $NSLOTS </dev/null > /dev/null &
 
 # Write comsol server output in .txt file
 comsol server -nn $NNODES -np $NSLOTS > results/"$MOAB_JOBNAME"/"$MOAB_JOBNAME".comsol_server_output.txt &
+
 
 # Start a Matlab program (runComsol.m)
 matlab -nodesktop -nosplash -r  "addpath(genpath('/opt/bwhpc/ul/cae/comsol/5.2a/mli')); mphstart; runComsol;exit;"  > results/"$MOAB_JOBNAME"/"$MOAB_JOBNAME".out 2>&1
