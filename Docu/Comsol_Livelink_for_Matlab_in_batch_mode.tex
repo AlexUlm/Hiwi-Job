@@ -19,6 +19,13 @@
   % \usepackage[applemac]{inputenc} % für den Mac
 
 \usepackage{booktabs}
+\usepackage[autostyle]{csquotes}
+
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{upquote}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -85,6 +92,7 @@
 \newcommand{\C}{\mathbb{C}}
 \newcommand{\cP}{{\mathcal P}} 
 
+
 \begin{document}
 
 \author{}
@@ -97,7 +105,8 @@
 \section{Allgemeines}
 
 \begin{itemize}
-\item Voraussetzung: Registrieren für den bwUniCluster und bwFileStorage auf der Website des KIT 
+\item Voraussetzung: Registrieren für den bwUniCluster und bwFileStorage auf der Website des KIT: \\
+\texttt{https://bwidm.scc.kit.edu/user/index.xhtml}
 \item Verbindung aufbauen:
 \begin{enumerate}
 \item bwUniCluster  \\ \texttt{ssh -X präfix\_login@bwunicluster.scc.kit.edu}
@@ -133,7 +142,7 @@
 
 \section{Interactive Batch-Jobs}
 Interaktive Berechnungen auf der Login-Node des bwUniClusters sind nicht erlaubt. Für interaktive Berechnungen muss auf interaktive Batch-Jobs (Option \texttt{-I}) zurückgegriffen werden. Beispiel:\\
-\hspace*{0.5cm} \texttt{musb -I -V -l nodes=1:ppn=4 -l walltime=00:00:20:00} \\
+\hspace*{0.5cm} \texttt{msub -I -V -l nodes=1:ppn=4 -l walltime=00:00:20:00} \\
 Die restlichen Optionen können analog zu normalen Batch-Jobs gewählt werden.\\
 Anschließend darf der Terminal nicht geschlossen werden und man muss darauf warten, dass einem die entsprechenden Ressourcen zugewiesen werden.
 
@@ -149,15 +158,16 @@ Wenn man sich anschließend mit dem bwUniCluster verbindet so öffnet sich ein T
 \end{itemize}
 
 \section{Mesh refinement}
-Ziel: Simulationsergebnis soll durch eine Verfeinerung des Meshes zur exakten Lösung ("unendlich" feines Mesh) konvergieren. Gleichzeitig soll soll das Netz aber nur so fein wie nötig gemacht werden, um die erforderliche Rechnerkapazität und Rechenzeit bei der Simulation des Modells möglichst gering zu halten. \\
+Ziel: Simulationsergebnis soll durch eine Verfeinerung des Meshes zur exakten Lösung (unendlich feines Mesh) konvergieren. Gleichzeitig soll das Netz aber nur so fein wie nötig gemacht werden, um die erforderliche Rechenkapazität und Rechenzeit bei der Simulation des Modells möglichst gering zu halten. \\
 Vorgehen:
 \begin{enumerate}
 \item Wahl einer aussagekräftigen Zustandsgröße des Modells anhand derer die Güte der Simulation mit der jeweiligen Netzgröße bewertet werden kann.
 \item Größe des Netzes als Parameter definieren
-\item Parametric Sweep über des Parameter durchführen (sehr zeitaufwendig, da das System für alle vorgegebenen Parameterwerte komplett simuliert werden muss.
+\item Parametric Sweep über des Parameter durchführen (sehr zeitaufwendig, da das System für alle vorgegebenen Parameterwerte komplett simuliert werden muss).
 \item Vergleich der Güte der Simulationsergebnisse anhand einer aussagekräftigen Zustandsgröße
 des Modells 
 \end{enumerate} 
+
 
 \section{Linux Terminal}
 \begin{tabular}{ll} 
@@ -172,5 +182,27 @@ In nächst höheres Verzeichnis wechseln & \texttt{cd ..}\\
 Dateien Löschen & \texttt{rm -rf <Dateiname>} \\
 \bottomrule
 \end{tabular}
+
+\section{Batch-Files}
+Genaue Informationen über die möglichen Optionen wie z.B. die verschiedenen Queue-Klassen oder die jeweils maximal zur Verfügung stehenden Ressourcen, die für einen Batch-Job im Header festgelegt werden können finden sich unter \\ 
+\texttt{https://www.bwhpc-c5.de/wiki/index.php/Batch\_Jobs}\\
+und unter \\
+\texttt{https://www.bwhpc-c5.de/wiki/index.php/Batch\_Jobs\_-\_bwUniCluster\_Features} \\
+Im Folgenden sind zwei beispielhafte Batch-Files für die Verwendung von Comsol auf dem bwUniCluster einmal mit dem LiveLink für Matlab und einmal ohne dargestellt.
+
+
+\newpage
+
+\lstset{language=sh, commentstyle=\color{green}, backgroundcolor=\color{white}, keywordstyle=\color{red},commentstyle=\color{blue},
+basicstyle = \ttfamily \color{black} \footnotesize ,
+caption = {Comsol mit LiveLink für Matlab im Batch-Modus}, }
+
+\lstinputlisting[language=sh]{comsol_with_livelink.moab}
+
+\lstset{language=sh, commentstyle=\color{green}, backgroundcolor=\color{white}, keywordstyle=\color{red},commentstyle=\color{blue},
+basicstyle = \ttfamily \color{black} \footnotesize ,
+caption = {Comsol ohne LiveLink für Matlab im Batch-Modus}, }
+
+\lstinputlisting[language=sh]{comsol_without_livelink.moab}
 
 \end{document}
