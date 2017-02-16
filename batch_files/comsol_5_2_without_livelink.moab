@@ -43,13 +43,20 @@ COMSOL_IN_FILE="Comsol_model.mph"
 COMSOL_OUT_FILE="Comsol_model_out.mph"
 COMSOL_LOG_FILE="Comsol_logfile.log"
 
+
+# Load required modules
+module load math/matlab/R2016a
+
+# Comsol Class Kit Licence for only using one computing node
+module load cae/comsol/5.2a
+
+# Comsol floating network licence for multiple computing nodes
+# module load cae/comsol/5.2a_fnl
+
+
 # Create results directory
 RESULTS_DIR="$MOAB_SUBMITDIR"/results/"$MOAB_JOBNAME"."$MOAB_JOBID"
 mkdir -pv "$RESULTS_DIR" 
-
-# Load required modules
-module load cae/comsol
-module load math/matlab
 
 # Run COMSOL job
 comsol batch -nn $NNODES -np $NSLOTS -inputfile "$COMSOL_IN_FILE"   \
